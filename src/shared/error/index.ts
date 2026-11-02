@@ -31,3 +31,9 @@ export class NotFound extends ClientError {
         super(message, 404)
     }
 }
+
+export class UnsupportedMediaType extends ClientError {
+    constructor(message = "Unsupported Media Type"){
+        super(message, 415)
+    }
+}

@@ -16,6 +16,7 @@ const port = getEnvVar("PORT");
 const url = getEnvVar("DB_URL");
 const platform = getEnvVar("PLATFORM");
 const jwtSecrete = getEnvVar("JWT_SECRETE");
+const webhookSecret = getEnvVar("WEBHOOK_SECRET");
 
 type DBConfig = {
     url: string;
@@ -26,6 +27,7 @@ type APIConfig = {
     port: number;
     platform: string;
     jwtSecrete: string;
+    webhookSecret: string;
 };
 
 type Config = {
@@ -46,6 +48,7 @@ const api: APIConfig = {
     port: Number(port),
     platform,
     jwtSecrete,
+    webhookSecret,
 };
 
 export const config: Config = {

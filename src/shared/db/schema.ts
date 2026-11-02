@@ -14,3 +14,4 @@ export const users = pgTable("users", {
   hashedPassword: varchar("hashed_password").default("unset").notNull(),
   role: userRoleEnum().notNull().default("client")
 });
+
