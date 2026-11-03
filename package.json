@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --clean --sourcemap",
-    "start": "pnpm run build && node --enable-source-maps dist/index.js",
+    "start": "node --enable-source-maps dist/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
