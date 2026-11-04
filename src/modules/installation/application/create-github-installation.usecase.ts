@@ -1,4 +1,4 @@
-import { Unauthorized } from "../../../../shared/error";
+import { Unauthorized } from "../../../shared/error";
 import type { SignatureManager } from "../domain/ports";
 
 type EventParams = {

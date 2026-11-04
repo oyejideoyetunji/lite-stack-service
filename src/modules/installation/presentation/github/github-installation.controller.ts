@@ -1,17 +1,17 @@
 import type { Request, Response } from "express";
-import type { CreateGithubInstallationUseCase } from "../application";
+import type { CreateGithubInstallationUseCase } from "../../application";
 import { BadRequest, UnsupportedMediaType } from "../../../../shared/error";
 
-interface InstallationUsecases {
+interface GithubInstallationUsecases {
     createGithubInstallation: CreateGithubInstallationUseCase;
 }
 
-export class InstallationController {
+export class GithubInstallationController {
     constructor (
-        private readonly useCases: InstallationUsecases,
+        private readonly useCases: GithubInstallationUsecases,
     ){}
 
-    createGithubInstallation = (req: Request, res: Response) => {
+    create = (req: Request, res: Response) => {
         const payload: unknown = req.body;
         console.log("payload", payload)
 

@@ -4,7 +4,7 @@ import { createAuthModule } from "./modules/auth/auth.module";
 import { createUserModule } from "./modules/user/user.module";
 import { config } from "./shared/config";
 import { errorHandler, nonOkResponseLogger, setAuthData } from "./shared/middlewares";
-import { createIntegrationModule } from "./modules/integration/integration.module";
+import { createInstallationModule } from "./modules/installation/installation.module";
 
 const app = express();
 const PORT = config.api.port;
@@ -17,17 +17,21 @@ app.use(
   })
 );
 
-app.use("/api/v1/integration", express.raw({ type: "application/json", limit: "25mb" }), createIntegrationModule().router)
+app.use(
+  "/api/v1/installation", 
+  express.raw({ type: "application/json", limit: "25mb" }), 
+  createInstallationModule().router
+);
 
 app.use(express.json());
 
-app.use("/api/v1/auth", createAuthModule().router)
+app.use("/api/v1/auth", createAuthModule().router);
 
-app.use("/api/v1/users", setAuthData({getUserAuth: createUserModule().userUseCases.getUserAuth.execute}), createUserModule().router)
+app.use("/api/v1/users", setAuthData({getUserAuth: createUserModule().userUseCases.getUserAuth.execute}), createUserModule().router);
 
 app.use("", (_, res) => {
   res.status(200).send({ "message": "OK" });
-})
+});
 
 app.use(nonOkResponseLogger);
 app.use(errorHandler);

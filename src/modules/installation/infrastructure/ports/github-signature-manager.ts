@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { SignatureManager } from "../../domain/ports";
-import { config } from "../../../../../shared/config";
+import { config } from "../../../../shared/config";
 
 export class GithubSignatureManager implements SignatureManager {
   verify(signature: string | undefined, payload: Buffer) {
