@@ -1,17 +1,17 @@
 import type { Request, Response } from "express";
-import type { CreateGithubEventUseCase } from "../application/create-github-event.usecase";
-import { BadRequest, UnsupportedMediaType } from "../../../shared/error";
+import type { CreateGithubInstallationUseCase } from "../application";
+import { BadRequest, UnsupportedMediaType } from "../../../../shared/error";
 
-interface ProjectWebhookUsecases {
-    createGithubEvent: CreateGithubEventUseCase;
+interface InstallationUsecases {
+    createGithubInstallation: CreateGithubInstallationUseCase;
 }
 
-export class ProjectWebhookController {
+export class InstallationController {
     constructor (
-        private readonly useCases: ProjectWebhookUsecases,
+        private readonly useCases: InstallationUsecases,
     ){}
 
-    createGithubEvent = (req: Request, res: Response) => {
+    createGithubInstallation = (req: Request, res: Response) => {
         const payload: unknown = req.body;
         console.log("payload", payload)
 
@@ -30,7 +30,7 @@ export class ProjectWebhookController {
             throw new BadRequest("Missing GitHub webhook headers");
         }
 
-        const event = this.useCases.createGithubEvent.execute({ signature, payload });
+        const event = this.useCases.createGithubInstallation.execute({ signature, payload });
         console.log(event)
 
         res.status(202).send({ received: true });

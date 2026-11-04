@@ -4,7 +4,7 @@ import { createAuthModule } from "./modules/auth/auth.module";
 import { createUserModule } from "./modules/user/user.module";
 import { config } from "./shared/config";
 import { errorHandler, nonOkResponseLogger, setAuthData } from "./shared/middlewares";
-import { createProjectWebHookModule } from "./modules/project-webhook/project-webhook.module";
+import { createIntegrationModule } from "./modules/integration/integration.module";
 
 const app = express();
 const PORT = config.api.port;
@@ -17,7 +17,7 @@ app.use(
   })
 );
 
-app.use("/api/v1/webhooks/github", express.raw({ type: "application/json", limit: "25mb" }), createProjectWebHookModule().router)
+app.use("/api/v1/integration", express.raw({ type: "application/json", limit: "25mb" }), createIntegrationModule().router)
 
 app.use(express.json());
 

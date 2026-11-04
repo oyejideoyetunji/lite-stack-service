@@ -1,4 +1,4 @@
-import { Unauthorized } from "../../../shared/error";
+import { Unauthorized } from "../../../../shared/error";
 import type { SignatureManager } from "../domain/ports";
 
 type EventParams = {
@@ -6,7 +6,7 @@ type EventParams = {
   payload: Buffer;
 }
 
-export class CreateGithubEventUseCase {
+export class CreateGithubInstallationUseCase {
   constructor(private readonly signatureManager: SignatureManager) {}
 
   execute(event: EventParams) {
