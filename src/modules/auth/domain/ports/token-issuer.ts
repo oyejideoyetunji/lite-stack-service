@@ -1,9 +1,5 @@
-export type JwtPayload = {
-  userId: string;
-  email: string;
-  roles: string[];
-}
+import type { AuthContext } from "../auth-context";
 
 export interface TokenIssuer {
-  issueFor(params: JwtPayload): string;
+  issueFor(params: AuthContext): string;
 }

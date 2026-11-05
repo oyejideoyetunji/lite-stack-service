@@ -15,3 +15,11 @@ export const users = pgTable("users", {
   role: userRoleEnum().notNull().default("client")
 });
 
+export const installationStates = pgTable("installation_states", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  consumedAt: timestamp("consumed_at"),
+  expiresAt: timestamp("expires_at").notNull(),
+  stateHash: varchar("state_hash").unique().notNull(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull()
+});

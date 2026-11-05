@@ -1,9 +1,10 @@
-import { config } from "../../../../shared/config";
-import type { TokenIssuer, JwtPayload } from "../../domain/ports";
 import Jwt from "jsonwebtoken";
+import { config } from "../../../../shared/config";
+import type { AuthContext } from "../../domain/auth-context";
+import type { TokenIssuer } from "../../domain/ports";
 
 export class TokenIssuerPort implements TokenIssuer {
-    issueFor = (params: JwtPayload) => {
+    issueFor = (params: AuthContext) => {
         return makeJWT(params, 60*60, config.api.jwtSecrete)
     }
 }

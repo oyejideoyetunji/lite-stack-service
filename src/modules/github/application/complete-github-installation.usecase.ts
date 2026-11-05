@@ -1,23 +1,23 @@
 import { Unauthorized } from "../../../shared/error";
 import type { SignatureManager } from "../domain/ports";
 
-type EventParams = {
+type InstallationParams = {
   signature: string | undefined;
   payload: Buffer;
 }
 
-export class CreateGithubInstallationUseCase {
+export class CompleteGithubInstallationUseCase {
   constructor(private readonly signatureManager: SignatureManager) {}
 
-  execute(event: EventParams) {
-    if (!this.signatureManager.verify(event.signature, event.payload)) {
+  execute(params: InstallationParams) {
+    if (!this.signatureManager.verify(params.signature, params.payload)) {
       throw new Unauthorized();
     }
 
     let data: unknown;
 
     try {
-      data = JSON.parse(event.payload.toString("utf8"));
+      data = JSON.parse(params.payload.toString("utf8"));
     } catch {
       throw new Unauthorized();
     }

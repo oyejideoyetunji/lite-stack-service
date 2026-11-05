@@ -8,6 +8,27 @@
       "when": 1793641412028,
       "tag": "0000_colossal_whirlwind",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793805177573,
+      "tag": "0001_bouncy_karnak",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793877680946,
+      "tag": "0002_quiet_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793878235566,
+      "tag": "0003_nice_wrecker",
+      "breakpoints": true
     }
   ]
 }

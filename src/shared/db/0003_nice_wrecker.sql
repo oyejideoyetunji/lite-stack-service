@@ -1,0 +1,1 @@
+ALTER TABLE "installation_states" ADD CONSTRAINT "installation_states_state_hash_unique" UNIQUE("state_hash");

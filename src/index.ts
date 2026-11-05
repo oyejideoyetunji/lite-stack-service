@@ -4,7 +4,7 @@ import { createAuthModule } from "./modules/auth/auth.module";
 import { createUserModule } from "./modules/user/user.module";
 import { config } from "./shared/config";
 import { errorHandler, nonOkResponseLogger, setAuthData } from "./shared/middlewares";
-import { createInstallationModule } from "./modules/installation/installation.module";
+import { createGithubModule } from "./modules/github/github.module";
 
 const app = express();
 const PORT = config.api.port;
@@ -18,14 +18,20 @@ app.use(
 );
 
 app.use(
-  "/api/v1/installation", 
-  express.raw({ type: "application/json", limit: "25mb" }), 
-  createInstallationModule().router
+  "/api/v1/github", 
+  express.raw({ type: "application/json", limit: "25mb" }),
+  createGithubModule().githubWebhookRouter
 );
 
 app.use(express.json());
 
 app.use("/api/v1/auth", createAuthModule().router);
+
+app.use(
+  "/api/v1/github",
+  setAuthData({getUserAuth: createUserModule().userUseCases.getUserAuth.execute}),
+  createGithubModule().githubRouter
+);
 
 app.use("/api/v1/users", setAuthData({getUserAuth: createUserModule().userUseCases.getUserAuth.execute}), createUserModule().router);
 
