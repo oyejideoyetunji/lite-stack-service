@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import { BadRequest, UnsupportedMediaType } from "../../../shared/error";
-import type { CompleteGithubInstallationUseCase } from "../application";
+import type { HandleWebhookUseCase } from "../application";
 
 interface GithubWebhookUseCases {
-    completeInstallation: CompleteGithubInstallationUseCase;
+    handleWebhook: HandleWebhookUseCase;
 }
 
 export class GithubWebhookController {
@@ -26,8 +26,16 @@ export class GithubWebhookController {
             throw new BadRequest("Missing GitHub webhook headers");
         }
 
-        this.useCases.completeInstallation.execute({ signature, payload });
+        const data = this.useCases.handleWebhook.execute({ signature, payload });
+        console.log(">=========== webhook Data ============<");
+        console.log("data: ", data)
+        console.log("signature: ", signature)
+        console.log("deliveryId: ", deliveryId)
+        console.log("eventName: ", eventName)
+        console.log(">=========== webhook Data ============<");
 
-        res.status(202).send({ received: true });
+        // res.status(202).send({ received: true });
+
+        throw new Error("unexpected error")
     };
 }

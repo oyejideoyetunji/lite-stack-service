@@ -20,10 +20,12 @@ function getEnvVar(key: string) {
 }
 
 const port = getEnvVar("PORT");
-const url = getEnvVar("DB_URL");
+const dbUrl = getEnvVar("DB_URL");
 const platform = getEnvVar("PLATFORM");
-const jwtSecrete = getEnvVar("JWT_SECRETE");
-const webhookSecret = getEnvVar("WEBHOOK_SECRET");
+const jwtSecret = getEnvVar("JWT_SECRET");
+const githubAppWebhookSecret = getEnvVar("GITHUB_APP_WEBHOOK_SECRET");
+const githubAppClientSecret = getEnvVar("GITHUB_APP_CLIENT_SECRET");
+const githubAppClientId = getEnvVar("GITHUB_APP_CLIENT_ID");
 
 type DBConfig = {
     url: string;
@@ -33,8 +35,10 @@ type DBConfig = {
 type APIConfig = {
     port: number;
     platform: string;
-    jwtSecrete: string;
-    webhookSecret: string;
+    jwtSecret: string;
+    githubAppWebhookSecret: string;
+    githubAppClientSecret: string;
+    githubAppClientId: string;
 };
 
 type Config = {
@@ -47,15 +51,17 @@ const migrationConfig: MigrationConfig = {
 };
 
 const db: DBConfig = {
-    url,
+    url: dbUrl,
     migrationConfig,
 };
 
 const api: APIConfig = {
     port: Number(port),
     platform,
-    jwtSecrete,
-    webhookSecret,
+    jwtSecret,
+    githubAppWebhookSecret,
+    githubAppClientSecret,
+    githubAppClientId,
 };
 
 export const config: Config = {

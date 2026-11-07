@@ -1,7 +1,11 @@
 import { z, ZodError } from "zod";
 import type { Request, Response, NextFunction } from "express";
+import { BadRequest, type ClientError } from "../error";
 
-export function validateRequestData(schema: z.ZodObject) {
+export function validateRequestData(
+    schema: z.ZodObject,
+    ErrorClass: new (message?: string) => ClientError = BadRequest
+) {
     return async function (req: Request, res: Response, next: NextFunction) {
         try {
             const parsed = await schema.parseAsync({
@@ -15,8 +19,7 @@ export function validateRequestData(schema: z.ZodObject) {
             next();
         } catch (error) {
             if (error instanceof ZodError) {
-                res.status(400).send({ errors: error.issues })
-                return;
+                throw new ErrorClass(error.issues.join(", "));
             }
             next(error)
         }

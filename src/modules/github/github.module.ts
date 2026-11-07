@@ -1,4 +1,4 @@
-import { CompleteGithubInstallationUseCase, StartGithubInstallationUseCase } from "./application";
+import { CompleteGithubInstallationUseCase, HandleWebhookUseCase, StartGithubInstallationUseCase } from "./application";
 import { GithubSignatureManager } from "./infrastructure/ports";
 import { GithubInstallationStateRepository } from "./infrastructure/repository";
 import { GithubWebhookController } from "./presentation/github-webhook.controller";
@@ -8,10 +8,11 @@ import { githubRoutes, githubWebhookRoutes } from "./presentation/github.routes"
 export function createGithubModule() {
     const githubUseCases = {
         startInstallation: new StartGithubInstallationUseCase(new GithubInstallationStateRepository()),
+        completeInstallation: new CompleteGithubInstallationUseCase(new GithubInstallationStateRepository()),
     };
 
     const githubWebhookUseCases = {
-        completeInstallation: new CompleteGithubInstallationUseCase(new GithubSignatureManager()),
+        handleWebhook: new HandleWebhookUseCase(new GithubSignatureManager()),
     };
 
     const githubRouter = githubRoutes(new GithubController(githubUseCases));

@@ -16,7 +16,7 @@ export class GithubSignatureManager implements SignatureManager {
 
     const expectedSignatureString = createHmac(
       "sha256",
-      config.api.webhookSecret,
+      config.api.githubAppWebhookSecret,
     ).update(payload).digest("hex")
     const sliced_sig = signature.slice("sha256=".length);
 
@@ -24,7 +24,6 @@ export class GithubSignatureManager implements SignatureManager {
     const receivedSignature = Buffer.from(sliced_sig, "hex");
   
     if (receivedSignature.length !== expectedSignature.length) {
-      console.log("failed here!!!!")
       return false;
     }
   

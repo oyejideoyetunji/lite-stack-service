@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", [
   "client",
@@ -23,3 +23,38 @@ export const installationStates = pgTable("installation_states", {
   stateHash: varchar("state_hash").unique().notNull(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull()
 });
+
+export const installations = pgTable("installations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  installationId: text("installation_id").notNull().unique(),
+  suspendedAt: timestamp("suspended_at"),
+  uninstalledAt: timestamp("uninstalled_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+
+  // GitHub account or organization information.
+  // accountId: text("account_id").notNull(),
+  // accountType: varchar("account_type", { length: 50 }).notNull(),
+  // accountLogin: varchar("account_login", { length: 255 }).notNull(),
+  // userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+});
+
+// user-github-installations.schema.ts
+
+export const userInstallations = pgTable(
+  "user_installations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    installationId: uuid("installation_id").notNull().references(() => installations.id, { onDelete: "cascade" }),
+    disconnectedAt: timestamp("disconnected_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    // The GitHub user who authorized the connection.
+    githubUserId: text("github_user_id").notNull(),
+    githubLogin: varchar("github_login", { length: 255 }).notNull(),
+  },
+  (table) => [
+    unique("user_installations_unique").on(table.userId, table.installationId),
+  ],
+);

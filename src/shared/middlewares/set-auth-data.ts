@@ -17,7 +17,7 @@ export function setAuthData(gateway: GateWay){
     return async function (req: Request, res: Response, next: NextFunction){
         try {
             const token = getBearerToken(req);
-            const payload = validateJWT(token, config.api.jwtSecrete);
+            const payload = validateJWT(token, config.api.jwtSecret);
             const parsed = schema.parse(payload);
             await gateway.getUserAuth(parsed.email);
 

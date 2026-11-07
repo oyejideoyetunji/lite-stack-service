@@ -29,6 +29,13 @@
       "when": 1793878235566,
       "tag": "0003_nice_wrecker",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794059431320,
+      "tag": "0004_aromatic_katie_power",
+      "breakpoints": true
     }
   ]
 }

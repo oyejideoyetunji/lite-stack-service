@@ -5,7 +5,7 @@ import type { TokenIssuer } from "../../domain/ports";
 
 export class TokenIssuerPort implements TokenIssuer {
     issueFor = (params: AuthContext) => {
-        return makeJWT(params, 60*60, config.api.jwtSecrete)
+        return makeJWT(params, 60*60, config.api.jwtSecret)
     }
 }
 
