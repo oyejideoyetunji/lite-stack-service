@@ -17,7 +17,7 @@ const completeInstallationSchema = z.object({
     body: z.object({
         code: z.string(),
         state: z.hash("sha256"),
-        installation_id: z.string().optional()
+        installationId: z.string()
     })
 });
 

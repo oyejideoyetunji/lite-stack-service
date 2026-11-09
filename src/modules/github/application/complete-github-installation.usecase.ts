@@ -1,11 +1,14 @@
 import { config } from "../../../shared/config";
-import { BadRequest } from "../../../shared/error";
+import { BadRequest, Forbidden } from "../../../shared/error";
+import type { GithubInstallationResponse } from "../../../shared/types";
 import type { InstallationStateRepository } from "../domain/repository";
+import { completeGithubInstallationTransaction } from "../infrastructure/transactions";
 
 type InstallationParams = {
   code: string;
   state: string;
   userId: string;
+  installationId: string;
 }
 
 export class CompleteGithubInstallationUseCase {
@@ -13,23 +16,29 @@ export class CompleteGithubInstallationUseCase {
     private readonly installationStates: InstallationStateRepository
   ) {}
 
-  async execute({ code, state, userId }: InstallationParams) {
-    // validate the installation state 
-    const pendingState = await this.installationStates.get(state, userId);
+  async execute({ code, state: stateHash, userId, installationId }: InstallationParams) {
+    const pendingState = await this.installationStates.get(stateHash, userId);
 
     if (!pendingState) {
       throw new BadRequest("Invalid or expired installation state");
     }
 
     const userToken = await exchangeGithubOAuthCode(code);
-    const user = await getGithubUser(userToken);
-    const installations = await getGithubUserInstallations(userToken);
+    // const user = await getGithubUser(userToken);
+    const installationResponse = await getGithubUserInstallation(userToken, installationId);
+    console.log("installation response is: ", installationResponse);
 
-    console.log(">========= Callback Here ===========<")
-    console.log("userToken: ", userToken)
-    console.log("user: ", user)
-    console.log("installations: ", installations)
-    console.log(">========= Callback Here ===========<")
+    if(!installationResponse) {
+      throw new Forbidden("User does not have access to this installation");
+    }
+    
+    const installation = await completeGithubInstallationTransaction({
+      userId,
+      stateHash,
+      installationResponse
+    })
+
+    return installation;
   }
 }
 
@@ -74,39 +83,53 @@ async function exchangeGithubOAuthCode(
     return result.access_token;
 }
 
-type GithubUserResponse = {
-  login: string;
-  id: number,
-}
+// type GithubUserResponse = {
+//   login: string;
+//   id: number,
+// }
 
-async function getGithubUser(accessToken: string) {
-  const response = await fetch("https://api.github.com/user", {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${accessToken}`,
-      "X-GitHub-Api-Version": "2026-03-10",
-    },
-  });
+// async function getGithubUser(accessToken: string) {
+//   const response = await fetch("https://api.github.com/user", {
+//     headers: {
+//       Accept: "application/vnd.github+json",
+//       Authorization: `Bearer ${accessToken}`,
+//       "X-GitHub-Api-Version": "2026-03-10",
+//     },
+//   });
 
-  if (!response.ok) {
-    throw new Error("Failed to get user github information");
-  }
+//   if (!response.ok) {
+//     throw new Error("Failed to get user github information");
+//   }
 
-  return (await response.json()) as GithubUserResponse;
-}
+//   return (await response.json()) as GithubUserResponse;
+// }
 
-async function getGithubUserInstallations(accessToken: string) {
-  const response = await fetch("https://api.github.com/user/installations", {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${accessToken}`,
-      "X-GitHub-Api-Version": "2026-03-10",
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to get user github installations information");
+async function getGithubUserInstallation(accessToken: string, installationId: string) {
+  const perPage = 100;
+
+  for (let page = 1; ; page++) {
+    const response = await fetch(`https://api.github.com/user/installations?per_page=${perPage}&page=${page}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${accessToken}`,
+        "X-GitHub-Api-Version": "2026-03-10",
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error("Failed to get user github installations information");
+    }
+
+    const data = (await response.json()) as {
+      total_count: number;
+      installations: GithubInstallationResponse[];
+    };
+
+    const match = data.installations.find((i) => i.id === Number(installationId));
+    if (match) return match;
+
+    if (data.installations.length < perPage) return null; // last page
   }
   
-  return await response.json() as any;
 }

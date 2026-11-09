@@ -1,23 +1,25 @@
 import { Unauthorized } from "../../../shared/error";
 import type { SignatureManager } from "../domain/ports";
+import { handleGithubWebhookInstallationEventsTransaction } from "../infrastructure/transactions";
 
 type EventParams = {
   signature: string | undefined;
+  event: string;
   payload: Buffer;
 }
 
 export class HandleWebhookUseCase {
   constructor(private readonly signatureManager: SignatureManager) {}
 
-  execute(params: EventParams) {
-    if (!this.signatureManager.verify(params.signature, params.payload)) {
+  execute = async ({ event, signature, payload }: EventParams) => {
+    if (!this.signatureManager.verify(signature, payload)) {
       throw new Unauthorized();
     }
 
     let data: unknown;
 
     try {
-      data = JSON.parse(params.payload.toString("utf8"));
+      data = JSON.parse(payload.toString("utf8"));
     } catch {
       throw new Unauthorized();
     }
@@ -25,6 +27,8 @@ export class HandleWebhookUseCase {
     if (!isRecord(data)) {
       throw new Unauthorized();
     }
+
+    await handleGithubWebhookInstallationEventsTransaction(event, data)
 
     return data;
   }

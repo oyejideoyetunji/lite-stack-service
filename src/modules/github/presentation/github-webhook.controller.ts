@@ -20,22 +20,20 @@ export class GithubWebhookController {
 
         const signature = req.get("x-hub-signature-256");
         const deliveryId = req.get("x-github-delivery");
-        const eventName = req.get("x-github-event");
+        const event = req.get("x-github-event");
 
-        if (!deliveryId || !eventName) {
+        if (!deliveryId || !event) {
             throw new BadRequest("Missing GitHub webhook headers");
         }
 
-        const data = this.useCases.handleWebhook.execute({ signature, payload });
-        console.log(">=========== webhook Data ============<");
+        const data = this.useCases.handleWebhook.execute({ signature, payload, event });
+        console.log(">=========== webhook Data Starts ============<");
         console.log("data: ", data)
         console.log("signature: ", signature)
         console.log("deliveryId: ", deliveryId)
-        console.log("eventName: ", eventName)
-        console.log(">=========== webhook Data ============<");
+        console.log("eventName: ", event)
+        console.log(">=========== webhook Data Ends ============<");
 
-        // res.status(202).send({ received: true });
-
-        throw new Error("unexpected error")
+        res.status(202).send({ received: true });
     };
 }
