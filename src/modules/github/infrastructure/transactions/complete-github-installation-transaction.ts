@@ -31,13 +31,17 @@ export async function completeGithubInstallationTransaction(params: {
     // 2. Make sure the installation row exists. DO NOTHING (not update):
     //    webhooks are the source of truth for installation data, and this
     //    snapshot could be older than what a webhook already wrote.
-    const [installation] = await tx
+    await tx
       .insert(githubInstallations)
       .values(installationValues(installationResponse))
-      .onConflictDoNothing()
-      .returning();
+      .onConflictDoNothing();
 
-    if (!installation) throw new Error("Failed to create installation record on our system");
+    const [installation] = await tx
+      .select()
+      .from(githubInstallations)
+      .where(eq(githubInstallations.githubInstallationId, installationResponse.id));
+
+      if (!installation) throw new Error("Installation record not found");
 
     // 3. Link the user. Repeat callbacks cause no duplicates.
     await tx

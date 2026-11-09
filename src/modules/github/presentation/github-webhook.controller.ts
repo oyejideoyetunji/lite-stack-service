@@ -6,6 +6,8 @@ interface GithubWebhookUseCases {
     handleWebhook: HandleWebhookUseCase;
 }
 
+const HANDLED_EVENTS = new Set(["installation", "installation_repositories"]);
+
 export class GithubWebhookController {
     constructor (
         private readonly useCases: GithubWebhookUseCases,
@@ -14,16 +16,20 @@ export class GithubWebhookController {
     execute = async (req: Request, res: Response) => {
         const payload: unknown = req.body;
 
-        if (!Buffer.isBuffer(payload)) {
-          throw new UnsupportedMediaType("Expected a raw JSON request body");
-        }
-
         const signature = req.get("x-hub-signature-256");
         const deliveryId = req.get("x-github-delivery");
         const event = req.get("x-github-event");
 
-        if (!deliveryId || !event) {
+        if (!event || !signature || !deliveryId) {
             throw new BadRequest("Missing GitHub webhook headers");
+        }
+
+        if (!HANDLED_EVENTS.has(event)) {
+            res.status(202).send({ received: true }); // acknowledge, do nothing
+        }
+
+        if (!Buffer.isBuffer(payload)) {
+          throw new UnsupportedMediaType("Expected a raw JSON request body");
         }
 
         const data = await this.useCases.handleWebhook.execute({ signature, payload, event });
