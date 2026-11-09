@@ -11,12 +11,17 @@ export function createGithubModule() {
         completeInstallation: new CompleteGithubInstallationUseCase(new GithubInstallationStateRepository()),
     };
 
+    const githubRouter = githubRoutes(new GithubController(githubUseCases));
+
+    return { githubRouter };
+}
+
+export function createGithubWebhookModule() {
     const githubWebhookUseCases = {
         handleWebhook: new HandleWebhookUseCase(new GithubSignatureManager()),
     };
 
-    const githubRouter = githubRoutes(new GithubController(githubUseCases));
     const githubWebhookRouter = githubWebhookRoutes(new GithubWebhookController(githubWebhookUseCases));
 
-    return { githubRouter, githubWebhookRouter };
+    return { githubWebhookRouter };
 }

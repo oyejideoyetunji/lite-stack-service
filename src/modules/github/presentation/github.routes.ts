@@ -24,7 +24,7 @@ const completeInstallationSchema = z.object({
 export function githubWebhookRoutes(controller: GithubWebhookController) {
     const router: Router = Router();
 
-    router.post("/webhook", controller.execute);
+    router.post("", controller.execute);
 
     return router;
 }

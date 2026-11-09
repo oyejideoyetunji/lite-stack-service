@@ -11,7 +11,7 @@ export class GithubWebhookController {
         private readonly useCases: GithubWebhookUseCases,
     ){}
 
-    execute = (req: Request, res: Response) => {
+    execute = async (req: Request, res: Response) => {
         const payload: unknown = req.body;
 
         if (!Buffer.isBuffer(payload)) {
@@ -26,7 +26,7 @@ export class GithubWebhookController {
             throw new BadRequest("Missing GitHub webhook headers");
         }
 
-        const data = this.useCases.handleWebhook.execute({ signature, payload, event });
+        const data = await this.useCases.handleWebhook.execute({ signature, payload, event });
         console.log(">=========== webhook Data Starts ============<");
         console.log("data: ", data)
         console.log("signature: ", signature)
