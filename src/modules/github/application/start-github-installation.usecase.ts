@@ -14,7 +14,7 @@ export class StartGithubInstallationUseCase {
         const state = await this.installationStates.start({
             userId,
             stateHash,
-            expiresAt: new Date(Date.now() + 60*10*1000)
+            expiresAt: new Date(Date.now() + 60*30*1000)
         });
 
         if (!state) {
