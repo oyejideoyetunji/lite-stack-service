@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", [
   "client",
@@ -24,37 +24,36 @@ export const installationStates = pgTable("installation_states", {
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull()
 });
 
-export const installations = pgTable("installations", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  installationId: text("installation_id").notNull().unique(),
+export const githubInstallations = pgTable("github_installations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  githubInstallationId: bigint("github_installation_id", { mode: "number" }).notNull().unique(),
+  githubAccountId: bigint("github_account_id", { mode: "number" }).notNull(),
+  accountLogin: text("account_login").notNull(),
+  accountType: text("account_type", { enum: ["User", "Organization"] }).notNull(),
+  repositorySelection: text("repository_selection", { enum: ["all", "selected"] }).notNull(),
+  permissions: jsonb("permissions").$type<Record<string, string>>().notNull().default({}),
   suspendedAt: timestamp("suspended_at"),
-  uninstalledAt: timestamp("uninstalled_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-
-  // GitHub account or organization information.
-  // accountId: text("account_id").notNull(),
-  // accountType: varchar("account_type", { length: 50 }).notNull(),
-  // accountLogin: varchar("account_login", { length: 255 }).notNull(),
-  // userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  deletedAt: timestamp("deleted_at"), // soft delete on `installation.deleted`
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-// user-github-installations.schema.ts
+export const userGithubInstallations = pgTable("user_github_installations", {
+  userId: uuid("user_id").notNull(), // references your users table
+  installationId: uuid("installation_id").notNull()
+    .references(() => githubInstallations.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (t) => [primaryKey({ columns: [t.userId, t.installationId] })]);
 
-export const userInstallations = pgTable(
-  "user_installations",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-    installationId: uuid("installation_id").notNull().references(() => installations.id, { onDelete: "cascade" }),
-    disconnectedAt: timestamp("disconnected_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-
-    // The GitHub user who authorized the connection.
-    githubUserId: text("github_user_id").notNull(),
-    githubLogin: varchar("github_login", { length: 255 }).notNull(),
-  },
-  (table) => [
-    unique("user_installations_unique").on(table.userId, table.installationId),
-  ],
-);
+export const githubRepositories = pgTable("github_repositories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  installationId: uuid("installation_id").notNull()
+    .references(() => githubInstallations.id, { onDelete: "cascade" }),
+  githubRepoId: bigint("github_repo_id", { mode: "number" }).notNull(),
+  fullName: text("full_name").notNull(),
+  isPrivate: boolean("is_private").notNull(),
+  removedAt: timestamp("removed_at"), // access revoked, keep row so services don't dangle
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex("github_repos_installation_repo_uq").on(t.installationId, t.githubRepoId),
+]);

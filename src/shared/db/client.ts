@@ -6,3 +6,4 @@ import { config } from "../config";
 const con = postgres(config.db.url);
 export const db = drizzle(con, { schema });
 export type Database = typeof db;
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];

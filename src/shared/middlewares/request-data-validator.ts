@@ -19,9 +19,10 @@ export function validateRequestData(
             next();
         } catch (error) {
             if (error instanceof ZodError) {
-                throw new ErrorClass(error.issues.join(", "));
+                throw new ErrorClass(`The following errors occured ${error.issues.map(issue => issue.message).join(", ")}`);
             }
-            next(error)
+
+            throw new ErrorClass();
         }
     }
 }
