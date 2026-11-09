@@ -43,6 +43,13 @@
       "when": 1794228971830,
       "tag": "0005_tan_squirrel_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794237771243,
+      "tag": "0006_tan_joystick",
+      "breakpoints": true
     }
   ]
 }

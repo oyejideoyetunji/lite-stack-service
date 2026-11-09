@@ -1,6 +1,7 @@
 import { config } from "../../../shared/config";
 import { BadRequest, Forbidden } from "../../../shared/error";
 import type { GithubInstallationResponse } from "../../../shared/types";
+import { getHash } from "../../../shared/utils";
 import type { InstallationStateRepository } from "../domain/repository";
 import { completeGithubInstallationTransaction } from "../infrastructure/transactions";
 
@@ -16,7 +17,8 @@ export class CompleteGithubInstallationUseCase {
     private readonly installationStates: InstallationStateRepository
   ) {}
 
-  async execute({ code, state: stateHash, userId, installationId }: InstallationParams) {
+  async execute({ code, state, userId, installationId }: InstallationParams) {
+    const stateHash = getHash(state);
     const pendingState = await this.installationStates.get(stateHash, userId);
 
     if (!pendingState) {
