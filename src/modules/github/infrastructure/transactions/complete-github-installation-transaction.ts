@@ -10,7 +10,7 @@ export async function completeGithubInstallationTransaction(params: {
 }) {
   const { userId, stateHash, installationResponse } = params;
 
-  await db.transaction(async (tx) => {
+  return await db.transaction(async (tx) => {
     // 1. Consume the state atomically. The conditions make it single-use,
     //    unexpired, and bound to this user, even with concurrent requests.
     const [state] = await tx
