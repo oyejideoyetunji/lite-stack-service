@@ -40,13 +40,14 @@ export class GithubController {
 
     const body = req.body;
 
-    console.log(">======= Complete Installation starts here ==========<")
-    console.log("req.body is: ", body)
     const installation = await this.useCases.completeInstallation.execute({
       ...body,
       userId: auth.userId,
     });
-    console.log(">======= Complete Installation ends here ==========<")
+
+    console.log(">=======Complete Installation Starts Here=========<");
+    console.log("The returned installation: ", installation)
+    console.log(">=======Complete Installation Ends Here=========<");
 
     res.status(201).send(installation);
   };

@@ -25,7 +25,6 @@ export function setAuthData(gateway: GateWay){
 
             next();
         } catch (error) {
-            console.log(error);
             throw new Unauthorized();
         }
     }

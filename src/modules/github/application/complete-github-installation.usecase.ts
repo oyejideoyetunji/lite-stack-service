@@ -28,7 +28,6 @@ export class CompleteGithubInstallationUseCase {
     const userToken = await exchangeGithubOAuthCode(code);
     // const user = await getGithubUser(userToken);
     const installationResponse = await getGithubUserInstallation(userToken, installationId);
-    console.log("installation response is: ", installationResponse);
 
     if(!installationResponse) {
       throw new Forbidden("User does not have access to this installation");
