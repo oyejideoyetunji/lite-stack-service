@@ -1,9 +1,11 @@
-import type { installationStates } from "../db";
+import type { githubInstallations, installationStates } from "../db";
 
 export type InstallationState = typeof installationStates.$inferSelect;
 export type NewInstallationState = typeof installationStates.$inferInsert;
 
 
+export type GithubInstallation = typeof githubInstallations.$inferSelect;
+export type NewGithubInstallationPayload = typeof githubInstallations.$inferInsert;
 
 
 export type GithubInstallationResponse = {
