@@ -58,10 +58,22 @@ export class GithubAppApiClient implements GithubApiClient {
         installations: GithubInstallationResponse[];
       };
 
-      const match = data.installations.find((i) => i.id === Number(installationId));
-      if (match) return match;
+      console.log(">========User installations Start===========<")
+      console.log(data)
+      console.log(">========User installations Start===========<")
 
-      if (data.installations.length < perPage) return null; // last page
+      const match = data.installations.find((i) => i.id === Number(installationId));
+      if (match){
+        console.log(">========User installation match Start===========<")
+        console.log(match)
+        console.log(">========User installation match Start===========<")
+        return match;
+      }
+
+      if (data.installations.length < perPage) {
+        console.log(">========User installation no match!!!!!===========<")
+        return null; // last page
+      }
     }
   }
 
