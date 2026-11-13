@@ -39,7 +39,7 @@ export const githubInstallations = pgTable("github_installations", {
 });
 
 export const userGithubInstallations = pgTable("user_github_installations", {
-  userId: uuid("user_id").notNull(), // references your users table
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   installationId: uuid("installation_id").notNull()
     .references(() => githubInstallations.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
