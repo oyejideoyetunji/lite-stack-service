@@ -5,7 +5,7 @@ export class CryptoStateTokenManager implements StateTokenManager {
   constructor(private readonly bytes = 32) {}
 
   generate() {
-    const token = randomBytes(this.bytes).toString("base64url");
+    const token = randomBytes(this.bytes).toString("hex");
     return { token, hash: this.hash(token) };
   }
 

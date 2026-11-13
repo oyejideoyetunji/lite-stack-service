@@ -29,7 +29,7 @@ export class CompleteGithubInstallationUseCase {
     }
 
     const installation = await this.unitOfWork.run(async ({ states, installations, userInstallations }) => {
-      if (!(await states.consume(stateHash, userId))) throw new BadRequest();
+      if (!(await states.consume(stateHash, userId))) throw new BadRequest("invalide installation state");
       const inst = await installations.insertIfAbsent(toInstallation(installationResponse)); // insert, then select
       await userInstallations.link(userId, inst.id);
       return inst;

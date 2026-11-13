@@ -27,6 +27,6 @@ export class GithubWebhookController {
             await this.useCases.applyRepositoriesEvent.execute(command);
         }
 
-        res.sendStatus(200);
+        res.status(202).send({ message: "Ok" });
     };
 }
