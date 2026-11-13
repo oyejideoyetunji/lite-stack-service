@@ -8,7 +8,7 @@ type InstallationParams = {
   code: string;
   state: string;
   userId: string;
-  githubInstallationId: number;
+  installationId: number;
 }
 
 export class CompleteGithubInstallationUseCase {
@@ -19,7 +19,7 @@ export class CompleteGithubInstallationUseCase {
     private readonly repoRepository: GithubRepositoryRepository,
   ) { }
 
-  async execute({ code, state, userId, githubInstallationId }: InstallationParams) {
+  async execute({ code, state, userId, installationId: githubInstallationId }: InstallationParams) {
     const stateHash = this.tokens.hash(state);
     const token = await this.github.exchangeCodeForUserToken(code);
     const installationResponse = await this.github.findUserInstallation(token, githubInstallationId);
