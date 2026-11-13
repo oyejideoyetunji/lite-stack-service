@@ -4,7 +4,7 @@ import { createAuthModule } from "./modules/auth/auth.module";
 import { createUserModule } from "./modules/user/user.module";
 import { config } from "./shared/config";
 import { errorHandler, nonOkResponseLogger, setAuthData } from "./shared/middlewares";
-import { createGithubModule, createGithubWebhookModule } from "./modules/github/github.module";
+import { createGithubModule, createGithubWebhookModule } from "./modules/github-integration/github.module";
 
 const app = express();
 const PORT = config.api.port;
