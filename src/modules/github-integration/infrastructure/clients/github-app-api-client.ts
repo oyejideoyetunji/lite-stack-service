@@ -30,6 +30,10 @@ export class GithubAppApiClient implements GithubApiClient {
       );
     }
 
+    console.log(">======Github User Access Token Start=======<")
+    console.log(result)
+    console.log(">======Github User Access Token End=======<")
+
     return result.access_token;
   }
 
@@ -81,7 +85,12 @@ export class GithubAppApiClient implements GithubApiClient {
       const data = (await res.json()) as { repositories: GithubRepositoryResponse[] };
       all.push(...data.repositories);
 
-      if (data.repositories.length < perPage) return all;
+      if (data.repositories.length < perPage) {
+        console.log(">======Github User installation repos Start=======<")
+        console.log(all);
+        console.log(">======Github User installation repos End=======<")
+        return all;
+      }
     }
   }
 

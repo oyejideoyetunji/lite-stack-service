@@ -15,6 +15,11 @@ export class GithubWebhookController {
     execute = async (req: Request, res: Response) => {
         const event = req.header("x-github-event")!;
         const payload = JSON.parse((req.body as Buffer).toString("utf8"));
+
+        console.log(">===========Webkook Data Starts Here===========<")
+        console.log("event: :", event)
+        console.log("payload: ", payload)
+        console.log(">===========Webkook Data Ends Here===========<")
     
         const command = mapWebhookPayload(event, payload); // returns null if not handled
         if (!command) return res.sendStatus(202);

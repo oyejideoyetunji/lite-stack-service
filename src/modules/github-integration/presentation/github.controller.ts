@@ -45,10 +45,6 @@ export class GithubController {
       userId: auth.userId,
     });
 
-    console.log(">=======Complete Installation Starts Here=========<");
-    console.log("The returned installation: ", installation)
-    console.log(">=======Complete Installation Ends Here=========<");
-
     res.status(201).send(installation);
   };
 }
